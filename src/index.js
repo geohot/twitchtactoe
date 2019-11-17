@@ -186,11 +186,13 @@ class Board extends React.Component {
           {this.renderSquare(7)}
           {this.renderSquare(8)}
         </div>
-        <div>My peer id is: {this.state.peer_id}</div>
+        <div class="peer-id">My peer id is: <span class="id-code">{this.state.peer_id}</span></div>
         <input type="text" placeholder="remote peer id" id="remotepeer" />
-        <input type="submit" value="connect" onClick={() => this.connect()} />
+        <input class="connect-button" type="submit" value="connect" onClick={() => this.connect()} />
+        <div class="lobby">
 				<h3>Click a user to challenge</h3>
-        <div><LobbyList friends={this.state.inlobby} /></div>
+        <div class="list"><LobbyList friends={this.state.inlobby} /></div>
+        </div>
       </div>
     );
   }
