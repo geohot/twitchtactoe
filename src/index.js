@@ -41,6 +41,12 @@ function Square(props) {
   );
 }
 
+const states = {
+  NOT_CONNECTED: "not_connected",
+  PLAYER_X: "player_x",
+  PLAYER_O: "player_o"
+};
+
 class Board extends React.Component {
   constructor(props) {
     super(props);
@@ -49,17 +55,39 @@ class Board extends React.Component {
       xIsNext: true,
       peer: new Peer(),
       peer_id: null,
+      conn: null,
+      connState: states.NOT_CONNECTED,
     };
     this.state.peer.on('open', (id) => {
       this.setState({peer_id: id});
     });
+    this.state.peer.on('connection', (conn) => {
+      console.log("got connection from", conn.peer);
+      this.setState({conn: conn, connState: states.PLAYER_O});
+      conn.on('data', (data) => {
+        console.log('Received', data);
+        if (this.state.xIsNext) {
+          // handle X press
+          this.handleFakeClick(Number(data));
+        }
+      });
+    });
   }
 
   handleClick(i) {
+    if (this.state.connState === states.PLAYER_X && this.state.xIsNext) {
+      this.handleFakeClick(i);
+    } else if (this.state.connState === states.PLAYER_O && !this.state.xIsNext) {
+      this.handleFakeClick(i);
+    }
+  }
+
+  handleFakeClick(i) {
     const squares = this.state.squares.slice();
-		if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares) || squares[i]) {
       return;
     }
+    this.state.conn.send(i);
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
       squares: squares,
@@ -74,8 +102,26 @@ class Board extends React.Component {
     />;
   }
 
+  connect() {
+    var rp = document.getElementById("remotepeer").value;
+    console.log("connect to", rp);
+    var conn = this.state.peer.connect(rp);
+    conn.on('open', () => {
+      console.log("connection open");
+      this.setState({conn: conn, connState: states.PLAYER_X});
+    });
+    conn.on('data', (data) => {
+      console.log('Received back', data);
+      if (!this.state.xIsNext) {
+        // handle O press
+        this.handleFakeClick(Number(data));
+      }
+    });
+  }
+
   render() {
     const winner = calculateWinner(this.state.squares);
+    let connstatus = this.state.connState;
     let status;
     if (winner != null) {
       if (winner == 'draw') {
@@ -89,6 +135,7 @@ class Board extends React.Component {
 
     return (
       <div>
+        <div className="connstatus">{connstatus}</div>
         <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
@@ -106,6 +153,8 @@ class Board extends React.Component {
           {this.renderSquare(8)}
         </div>
         <div>My peer id is: {this.state.peer_id}</div>
+        <input type="text" placeholder="remote peer id" id="remotepeer" />
+        <input type="submit" value="connect" onClick={() => this.connect()} />
       </div>
     );
   }
