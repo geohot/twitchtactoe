@@ -76,8 +76,11 @@ class Board extends React.Component {
       var lconn = this.state.peer.connect(LOBBY_NAME);
       lconn.on('open', () => {
         console.log("connected to lobby");
-        function lobby_query() {
+        var lobby_query = () => {
           lconn.send("QUERY");
+          if (this.state.connState === states.NOT_CONNECTED) {
+            lconn.send("READY");
+          }
           window.setTimeout(lobby_query, 1000);
         }
         lobby_query();
@@ -208,8 +211,12 @@ class Game extends React.Component {
     lobby.on('connection', (conn) => {
       console.log('lobby connection', conn.peer);
       conn.on('data', (data) => {
-        peers[conn.peer] = (new Date()).getTime();
-        conn.send(Object.keys(peers));
+        if (data === "READY") { 
+          peers[conn.peer] = (new Date()).getTime();
+        }
+        if (data === "QUERY") { 
+          conn.send(Object.keys(peers));
+        }
       });
     });
 
