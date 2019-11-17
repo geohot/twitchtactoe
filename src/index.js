@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import Peer from 'peerjs';
 import './index.css';
 
+const LOBBY_NAME = "twitchtactoe-lobby";
+
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -26,7 +28,7 @@ function calculateWinner(squares) {
       filledSquares++;
     }
   }
-  if(filledSquares == squares.length) {
+  if (filledSquares === squares.length) {
     return 'draw';
   } else {
     return null;
@@ -38,6 +40,16 @@ function Square(props) {
     <button className="square" onClick={props.onClick} >
       {props.value}
     </button>
+  );
+}
+
+function LobbyList(props) {
+  const friends = props.friends;
+	const listItems = friends.map((number) =>
+    <li onClick={() => {document.getElementById('remotepeer').value=number;}} key={number}>{number}</li>
+  );
+  return (
+    <ul>{listItems}</ul>
   );
 }
 
@@ -57,9 +69,23 @@ class Board extends React.Component {
       peer_id: null,
       conn: null,
       connState: states.NOT_CONNECTED,
+      inlobby: [],
     };
     this.state.peer.on('open', (id) => {
       this.setState({peer_id: id});
+      var lconn = this.state.peer.connect(LOBBY_NAME);
+      lconn.on('open', () => {
+        console.log("connected to lobby");
+        function lobby_query() {
+          lconn.send("QUERY");
+          window.setTimeout(lobby_query, 1000);
+        }
+        lobby_query();
+      });
+      lconn.on('data', (data) => {
+        console.log("setting lobby", data);
+        this.setState({inlobby: data});
+      });
     });
     this.state.peer.on('connection', (conn) => {
       console.log("got connection from", conn.peer);
@@ -74,6 +100,7 @@ class Board extends React.Component {
         });
       } else {
         console.log("already connected");
+        conn.close();
       }
     });
   }
@@ -128,7 +155,7 @@ class Board extends React.Component {
     let connstatus = this.state.connState;
     let status;
     if (winner != null) {
-      if (winner == 'draw') {
+      if (winner === 'draw') {
         status = 'Game is a draw';
       } else {
         status = 'Winner: ' + winner;
@@ -159,12 +186,44 @@ class Board extends React.Component {
         <div>My peer id is: {this.state.peer_id}</div>
         <input type="text" placeholder="remote peer id" id="remotepeer" />
         <input type="submit" value="connect" onClick={() => this.connect()} />
+				<h3>Click a user to challenge</h3>
+        <div><LobbyList friends={this.state.inlobby} /></div>
       </div>
     );
   }
 }
 
 class Game extends React.Component {
+  componentDidMount() {
+    console.log("trying to create lobby");
+
+    let peers = {};
+
+    // this may fail unless you are the first player
+    var lobby = new Peer(LOBBY_NAME);
+    lobby.on('open', function(id) {
+      console.log('Lobby peer ID is: ' + id);
+    });
+
+    lobby.on('connection', (conn) => {
+      console.log('lobby connection', conn.peer);
+      conn.on('data', (data) => {
+        peers[conn.peer] = (new Date()).getTime();
+        conn.send(Object.keys(peers));
+      });
+    });
+
+    function expire() {
+      for (var k in peers) {
+        var now = (new Date()).getTime();
+        if (now - peers[k] > 3000) {
+          delete peers[k];
+        }
+      }
+      window.setTimeout(expire, 1000);
+    }
+    expire();
+  }
   render() {
     return (
       <div className="game">
