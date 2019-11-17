@@ -53,14 +53,18 @@ class Board extends React.Component {
     });
     this.state.peer.on('connection', (conn) => {
       console.log("got connection from", conn.peer);
-      this.setState({conn: conn, connState: states.PLAYER_O});
-      conn.on('data', (data) => {
-        console.log('Received', data);
-        if (this.state.xIsNext) {
-          // handle X press
-          this.handleFakeClick(Number(data));
-        }
-      });
+      if (this.state.conn == null) {
+        this.setState({conn: conn, connState: states.PLAYER_O});
+        conn.on('data', (data) => {
+          console.log('Received', data);
+          if (this.state.xIsNext) {
+            // handle X press
+            this.handleFakeClick(Number(data));
+          }
+        });
+      } else {
+        console.log("already connected");
+      }
     });
   }
 
