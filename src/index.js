@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Peer from 'peerjs';
+
+import Square from './components/square';
+
 import './index.css';
 
 const LOBBY_NAME = "twitchtactoe-lobby";
@@ -33,14 +36,6 @@ function calculateWinner(squares) {
   } else {
     return null;
   }
-}
-
-function Square(props) {
-  return (
-    <button className="square" onClick={props.onClick} >
-      {props.value}
-    </button>
-  );
 }
 
 function LobbyList(props) {
