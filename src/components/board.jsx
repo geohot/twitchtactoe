@@ -7,7 +7,10 @@ import LobbyList from './lobby-list';
 import Square from './square';
 import GameStates from '../constants/game-states';
 
-import { calculateWinner } from '../helpers';
+import {
+  calculateWinner,
+  determineStatus,
+} from '../helpers';
 
 export default class Board extends React.Component {
   constructor(props) {
@@ -103,22 +106,15 @@ export default class Board extends React.Component {
   }
 
   render() {
-    const winner = calculateWinner(this.state.squares);
-    let connstatus = this.state.connState;
-    let status;
-    if (winner != null) {
-      if (winner === 'draw') {
-        status = 'Game is a draw';
-      } else {
-        status = 'Winner: ' + winner;
-      }
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
+    const {connState} = this.state.connState;
+    const status = determineStatus(
+      calculateWinner(this.state.squares),
+      this.state.xIsNext ? 'X': 'O',
+    );
 
     return (
       <div>
-        <div className="connstatus">{connstatus}</div>
+        <div className="connstatus">{connState}</div>
         <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
