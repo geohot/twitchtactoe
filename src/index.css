@@ -1,6 +1,11 @@
+@import url('https://fonts.googleapis.com/css?family=Fira+Code:300|Space+Mono&display=swap');
+
 body {
-  font: 14px "Century Gothic", Futura, sans-serif;
+  font-family: 'Fira Code', monospace;
+  font-size: 2vw;
   margin: 20px;
+  background-color: #1d1d1d;
+  color: white;
 }
 
 ol, ul {
@@ -18,18 +23,62 @@ ol, ul {
 }
 
 .square {
-  background: #fff;
-  border: 1px solid #999;
+  background-color: #444444;
+  color: white;
+  border: 0.1vw solid #fff;
+  width: 7vw;
+  height: 7vw;
+  line-height: 0;
   float: left;
-  font-size: 24px;
+  font-size: 7vw;
   font-weight: bold;
-  line-height: 34px;
-  height: 34px;
+  font-family: 'Space Mono', monospace;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+}
+
+.peer-id {
+  margin-top: 5%;
+}
+
+.id-code {
+  font-weight: bold;
+  color: #20c138;
+}
+
+input#remotepeer {
+  font-family: monospace;
+  width: 25vw;
+  height: 3vw;
+  font-size: 2.5vw;
+  line-height: 2vw;
+  background-color: 
+  #fff;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+input.connect-button {
+  display: inline-block;
+  box-sizing: content-box;
+  width: 14vw;
+  height: 3vw;
+  margin: 0;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  font-family: 'Space Mono', monospace;
+  font-size: 2vw;
+  line-height: 2vw;
+  padding: 0;
+  cursor: pointer;
+}
+
+input.connect-button:active {
+  background-color: #004ba0;
 }
 
 .square:focus {
@@ -49,3 +98,22 @@ ol, ul {
   margin-left: 20px;
 }
 
+.lobby {
+  position: absolute;
+  right: 10%;
+  top: 2%;
+  width: 42vw;
+  overflow: hidden;
+}
+
+.list ul {
+  list-style-type: square;
+}
+
+.list ul li {
+  cursor: pointer;
+}
+
+.list ul li:active {
+  color: darkgrey;
+}
