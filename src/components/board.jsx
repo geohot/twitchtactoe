@@ -64,7 +64,6 @@ export default class Board extends React.Component {
         lobby_query();
       });
       lconn.on('data', (data) => {
-        console.log("setting lobby", data);
         this.setState({inlobby: data});
       });
     });
@@ -164,12 +163,12 @@ export default class Board extends React.Component {
           {this.renderSquare(7)}
           {this.renderSquare(8)}
         </div>
-        <div class="peer-id">My peer id is: <span class="id-code">{this.state.peer_id}</span></div>
+        <div className="peer-id">My peer id is: <span className="id-code">{this.state.peer_id}</span></div>
         <input type="text" placeholder="remote peer id" id="remotepeer" />
-        <input class="connect-button" type="submit" value="connect" onClick={() => this.connect()} />
-        <div class="lobby">
+        <input className="connect-button" type="submit" value="connect" onClick={() => this.connect()} />
+        <div className="lobby">
 				<h3>Click a user to challenge</h3>
-        <div class="list"><LobbyList friends={this.state.inlobby} /></div>
+        <div className="list"><LobbyList friends={this.state.inlobby} /></div>
         </div>
       </div>
     );
