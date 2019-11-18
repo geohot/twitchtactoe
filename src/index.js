@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import Peer from 'peerjs';
 
 import Square from './components/square';
+import LobbyList from './components/lobby-list';
 
 import './index.css';
 
@@ -36,16 +37,6 @@ function calculateWinner(squares) {
   } else {
     return null;
   }
-}
-
-function LobbyList(props) {
-  const friends = props.friends;
-	const listItems = friends.map((number) =>
-    <li onClick={() => {document.getElementById('remotepeer').value=number;}} key={number}>{number}</li>
-  );
-  return (
-    <ul>{listItems}</ul>
-  );
 }
 
 const states = {
