@@ -10,7 +10,7 @@ import GameStates from '../constants/game-states';
 import {
   calculateWinner,
   determineStatus,
-} from '../helpers';
+} from '../utils';
 
 export default class Board extends React.Component {
   constructor(props) {
