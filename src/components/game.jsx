@@ -12,7 +12,7 @@ export default class Game extends React.Component {
     let peers = {};
 
     // this may fail unless you are the first player
-    var lobby = new Peer(Config.LOBBY_NAME);
+    const lobby = new Peer(Config.LOBBY_NAME);
     lobby.on('open', function(id) {
       console.log('Lobby peer ID is: ' + id);
     });
@@ -30,8 +30,8 @@ export default class Game extends React.Component {
     });
 
     function expire() {
-      for (var k in peers) {
-        var now = (new Date()).getTime();
+      for (const k in peers) {
+        const now = (new Date()).getTime();
         if (now - peers[k] > 3000) {
           delete peers[k];
         }

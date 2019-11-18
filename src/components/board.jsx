@@ -24,9 +24,10 @@ export default class Board extends React.Component {
       connState: GameStates.NOT_CONNECTED,
       inlobby: [],
     };
+
     this.state.peer.on('open', (id) => {
       this.setState({peer_id: id});
-      var lconn = this.state.peer.connect(Config.LOBBY_NAME);
+      const lconn = this.state.peer.connect(Config.LOBBY_NAME);
       lconn.on('open', () => {
         console.log("connected to lobby");
         var lobby_query = () => {
@@ -89,9 +90,9 @@ export default class Board extends React.Component {
   }
 
   connect() {
-    var rp = document.getElementById("remotepeer").value;
+    const rp = document.getElementById("remotepeer").value;
     console.log("connect to", rp);
-    var conn = this.state.peer.connect(rp);
+    const conn = this.state.peer.connect(rp);
     conn.on('open', () => {
       console.log("connection open");
       this.setState({conn: conn, connState: GameStates.PLAYER_X});
