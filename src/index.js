@@ -43,8 +43,10 @@ function Square(props) {
   );
 }
 
-function LobbyList(props) {
+function LobbyList(props, my_id) {
   const friends = props.friends;
+  friends.splice(friends.indexOf(my_id), 1) //remove my_id from friends
+
 	const listItems = friends.map((number) =>
     <li onClick={() => {document.getElementById('remotepeer').value=number;}} key={number}>{number}</li>
   );
@@ -191,7 +193,7 @@ class Board extends React.Component {
         <input class="connect-button" type="submit" value="connect" onClick={() => this.connect()} />
         <div class="lobby">
 				<h3>Click a user to challenge</h3>
-        <div class="list"><LobbyList friends={this.state.inlobby} /></div>
+        <div class="list"><LobbyList friends={this.state.inlobby} my_id = {this.state.peer_id} /></div>
         </div>
       </div>
     );
